@@ -1,5 +1,5 @@
 # Bamazon
-------
+
 An Amazon-like storefront that will take in orders from customers and deplete stock from the store's inventory as items are purchased.
 
 ------
@@ -12,5 +12,6 @@ An Amazon-like storefront that will take in orders from customers and deplete st
 4. Git
 5. Github
 
+---------
 __https://jmh947.github.io/bamazon/.__
 
