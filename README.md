@@ -4,6 +4,10 @@ An Amazon-like storefront that will take in orders from customers and deplete st
 
 ------
 
+![](bamazon_out.gif)
+
+![](bamazon_purchased.gif)
+
 
 #### Technologies used
 1. Node.js
