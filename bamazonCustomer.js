@@ -1,9 +1,9 @@
-function run() {
+ 
 
 var inquirer = require("inquirer");
 var mysql = require("mysql");
-
-var connect = mysql.createConnection({
+require ("console.table")
+var connection  = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
@@ -11,63 +11,68 @@ var connect = mysql.createConnection({
   database: "bamazon_db"
 });
 
-connect.connect(function(err) {
+connection.connect(function(err) {
   if (err) throw err;
   //console.log("Connected!");
-  
+  queryConnect();
 });
 
+var totalSales = 0
 
 
-queryConnect();
 
 function queryConnect() {
-  connect.query("SELECT * FROM products", function (err, result) {
+  connection.query("SELECT * FROM products", function (err, result) {
   if (err) throw err;
-  for (let i = 0; i < result.length; i++) {
-    console.log("ID: " + result[i].item_id + " || Name: " + result[i].product_name + " || Department: " + result[i].department_name + " || Price: $" +result[i].price + " || Quantity: " + result[i].stock_quantity);
-  }})
+
+  console.table(result)
   whichProduct();
+  // for (let i = 0; i < result.length; i++) {
+  //   console.log("ID: " + result[i].item_id + " || Name: " + result[i].product_name + " || Department: " + result[i].department_name + " || Price: $" +result[i].price + " || Quantity: " + result[i].stock_quantity);
+  // }
+})
+
 }
 
   //ask the user what product they would like to buy
 function whichProduct() {
+
     inquirer.prompt([
         {type: "input",
         message: "ID of item you would you like to purchase?",
-        name: "userPurchase"
-      }
+        name: "item_ID"
+      },
+      {type: "input",
+      message: "How many of that item would you like to purchase?",
+      name: "itemPurchase"
+    }
 
     ]).then(function(response){
-      console.log(response.userPurchase)
-      var item = response.userPurchase
-      itemPurchase(item)
+       
+      connection.query("select * from products WHERE item_id = ? ", response.item_ID, function(err, data){
+        if(err) throw(err)
+      var stock_quantity = data[0].stock_quantity - parseInt(response.itemPurchase)
+          if (stock_quantity >= 0) {
+            connection.query("update products set stock_quantity = ? WHERE item_id = ?", [stock_quantity, response.item_ID ], function(err, results){
+              if (err) throw(err)
+            
+              totalSales = totalSales + parseFloat(data[0].price) * response.itemPurchase
+
+              console.log("You have successfully purchased your item, Your total sale is: $", totalSales.toFixed(2))
+              queryConnect()
+            })  
+
+          } else {
+            console.log("Not enough in stock")
+            queryConnect()
+          }
+      })
     })};
 
-
-    function itemPurchase (item) {
-      inquirer.prompt([
-        {type: "input",
-        message: "How many of that item would you like to purchase?",
-        name: "itemPurchase"
-      }
-    ]).then(function(response){
-      console.log(response.itemPurchase)
-      var item = response.itemPurchase
-
-      //make another connection.query to database
-      //check if userquantity > stock quantity
-      //use update   to updateproduct table 
-      //set stock quantity to original stock quantity - user quantity
-    })};
+ 
 
 
 
 
 
-
-
-
-  };
-
-  run()
+   
