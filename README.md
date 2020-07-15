@@ -3,6 +3,7 @@
 An Amazon-like storefront that will take in orders from customers and deplete stock from the store's inventory as items are purchased.
 
 ------
+![](app.gif)
 
 ![](bamazon_out.gif)
 
